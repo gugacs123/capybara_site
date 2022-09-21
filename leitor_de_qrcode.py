@@ -1,42 +1,34 @@
-import imghdr
 import cv2
-import numpy as np
 from pyzbar.pyzbar import decode
-###########
+import time
+#####################################
 
-
-
-# img = cv2.imread('confere_qr.png')
-# pts2= barcode.rect
-            # cv2.putText(img,myData,(pts2[0]),(pts2[1]),cv2.FONT_HERSHEY_COMPLEX,
-            # 0.9,(255,0,255),2)
 cap = cv2.VideoCapture(0)
-cap.set(3,640)
-cap.set(4,480)
+cap.set(3, 640) #largura
+cap.set(4, 480) #altura
+codigos_usados=[]
 
-# while True:
-#     for barcode in decode(img):
-#         print(barcode.data)
-sucess, img = cap.read()
-myData= barcode.data.decode('utf-8')
-if myData==str('ok'):
-    print(myData,'opa lele')
-    pts = np.array([barcode.polygon], np.int32)
-    pts= pts.reshape((-1,1,2))
-    cv2.polylines(img,[pts], True,(255,0,255),5)
-    
-    
-else:
-    print(myData,'acesso negado lele')
-    pts = np.array([barcode.polygon], np.int32)
-    pts= pts.reshape((-1,1,2))
-    cv2.polylines(img,[pts], True,(255,0,255),5)
-        
+camera=True
+while camera == True:
+        sucess, frame = cap.read()
+        for code in decode (frame):
+            if code.data.decode('utf-8') not in codigos_usados:
+                print("Pode passar")
+                print(code.data.decode('utf-8'))
+                codigos_usados.append(code.data.decode('utf-8'))
+                time.sleep(5)
+            
+            elif code.data.decode('utf-8') in codigos_usados:
+                print("Esse QR já foi usado")
+                print(code.data.decode('utf-8'))
+                time.sleep(5)
+           
+               
+           
+            # print(code.type)
+            # print(code.data.decode('utf-8'))
+ 
+        cv2.imshow('Testando o Scanner de QR code', frame)
+        cv2.waitKey(1)
 
-        
 
-cv2.imshow('Result',img)
-cv2.waitKey(1)
-            # pts2= barcode.rect
-            # cv2.putText(img,myData,(pts2[0]),(pts2[1]),cv2.FONT_HERSHEY_COMPLEX,
-            # 0.9,(255,0,255),2)
